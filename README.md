@@ -1,4 +1,4 @@
-# Code_v2: BI-RADS ordinal grading baselines and PGCA
+# BI-RADS ordinal grading baselines and PGCA
 
 This package reorganizes the original prototype into six reproducible experiment lines:
 
