@@ -1,0 +1,30 @@
+experiment:
+  name: feature_only
+  task: feature_only
+
+paths:
+  data_root: data/us
+  labels_csv: data/us/labels.csv
+  feature_xlsx: data/us/X_with_only_feature.xlsx
+  split_dir: data/us/splits
+  output_dir: runs/feature_only
+
+model:
+  feature_dim: auto
+  hidden_dims: [128, 64]
+  dropout: 0.2
+  num_classes: 6
+
+train:
+  seed: 42
+  epochs: 30
+  batch_size: 64
+  num_workers: 0
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+
+loss:
+  lambda_ord: 1.0
+
+logging:
+  save_every: 1

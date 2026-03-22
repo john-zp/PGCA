@@ -1,0 +1,36 @@
+experiment:
+  name: all_input
+  task: all_input
+paths:
+  data_root: data/us
+  labels_csv: data/us/labels.csv
+  feature_xlsx: data/us/X_with_only_feature.xlsx
+  phrase_xlsx: data/us/X_with_all.xlsx
+  split_dir: data/us/splits
+  output_dir: runs/all_input
+model:
+  image_size: 224
+  image_backbone: resnet18
+  image_embed_dim: 256
+  phrase_dim: auto
+  feature_dim: auto
+  hidden_dim: 256
+  attn_heads: 4
+  dropout: 0.2
+  num_classes: 6
+train:
+  seed: 42
+  epochs: 30
+  batch_size: 16
+  num_workers: 0
+  lr: 0.0003
+  weight_decay: 0.0001
+loss:
+  lambda_ord: 1.0
+  lambda_sb_static: 0.2
+  lambda_sb_path: 0.05
+  sb_eps: 0.05
+  sb_iters: 50
+  sb_steps: 3
+logging:
+  save_every: 1
