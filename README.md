@@ -1,228 +1,119 @@
-# BI-RADS ordinal grading baselines and PGCA
+# Pathology-guided Cross-modal Attention (PGCA)
 
-This package reorganizes the original prototype into six reproducible experiment lines:
+Research code for six-level BI-RADS prediction from breast ultrasound images,
+36 structured sonographic observations, and a stored case-level pathology-text
+embedding. The target order is **2, 3, 4A, 4B, 4C, 5**, encoded as **1 through 6**.
 
-1. **image-only**: ultrasound image -> ordinal prediction  
-2. **feature-only**: structured ultrasound features -> ordinal prediction  
-3. **phrase-only**: precomputed prompt / phrase embedding -> ordinal prediction  
-4. **image+feature**: ultrasound image + structured features -> ordinal prediction  
-5. **image+phrase**: ultrasound image + prompt embedding -> ordinal prediction  
-6. **all-input**: image + structured features + prompt embedding -> ordinal prediction + optional SB/OT ROI alignment
+## Current implementation
 
-## 1. Data layout
+The `revised/` directory contains the implementation used in the revised study,
+retrieved from the completed research workspace on 2026-11-12. The initial
+implementation is retained under `legacy/` for historical inspection, not for
+reproducing the revised experiments. The previous repository tip is also
+preserved on `archive/initial-code-20261112`.
 
-Put your files into the following folders.
+- Four-stage **non-residual CNN**, grayscale 224 x 224 images, 14 x 14 tokens.
+- A 512-dimensional case-level pathology embedding projected to 256 dimensions.
+- Four-head cross-attention; image-global, attended-text and 36-field feature
+  representations are fused for prediction.
+- Five independent binary thresholds, with grade `1 + sum(sigmoid(logits) >= 0.5)`.
+  These outputs are not a normalized six-class distribution and have no imposed
+  monotonicity constraint.
+- Controlled Matched, Shuffled, Learnable, Sonographic and Constant Query sources,
+  with explicit pathology Residual ON/OFF settings.
+- Training-only rectangular-ROI supervision: ROI-KL, static Sinkhorn OT,
+  Static OT + ROI-KL, and a finite-state bridge/path penalty.
 
-```text
-Code_v2/
-├── configs/
-├── data/
-│   └── us/
-│       ├── images/              # ultrasound images, filenames like <id>.jpg or <id>.dcm.jpg
-│       ├── rois/                # ROI txt files, filenames like <id>.txt
-│       ├── labels.csv           # columns: filename,label
-│       ├── X_with_only_feature.xlsx
-│       ├── X_with_only_phrase.xlsx
-│       ├── X_with_all.xlsx
-│       └── splits/
-│           ├── train_ids.txt
-│           ├── val_ids.txt
-│           └── test_ids.txt
-├── src/
-├── scripts/
-└── README.md
-```
+Pathology embeddings are inputs at both training and inference for the matched
+PGCA model. ROI is not a prediction input. This code does not establish use at an
+ultrasound-only, pre-pathology clinical decision point, and is not a clinical device.
+There is no teacher-student or distillation branch.
 
-### What goes where
+## Where to start
 
-- `data/us/images/`
-  - Put **all ultrasound images** here.
-  - Supported names: `<id>.jpg`, `<id>.png`, `<id>.jpeg`, `<id>.dcm.jpg`
-  - Example: `1.2.250....75.dcm.jpg`
+| Directory under `revised/` | Purpose |
+| --- | --- |
+| `results_pgca36_pathology_20261013/` | Revised PGCA factory, simple modality baselines, ordinal head, spatial losses, hard-prediction metrics and reference training driver |
+| `results_pgca36_pathology_20261013/mechanism_validation_20261014/` | Uniform-QK strict control and parameter randomization |
+| `query_mechanism_20261102/` | Final 39-condition-seed matrix, group-consistent Query sources, residual controls and equal-ROI-KL comparisons |
+| `roi_supervision_20261021/` | ROI-KL and Static OT + ROI-KL reference experiments |
+| `supplementary_validation_20261014/` | Strong image/CatBoost baselines, earlier semantic controls and shared localization/statistics utilities |
+| `final_submission/source/analysis/` | Final group-bootstrap, group-swap/Holm and frozen-Query intervention analysis code |
+| `audit_20261013/reference_B/src/` | Frozen topology dependency, used through the revised model factory |
 
-- `data/us/rois/`
-  - Put **expert ROI txt files** here.
-  - Name each ROI file as `<id>.txt`
-  - Supported ROI formats:
-    - `x y w h`
-    - `x,y,w,h`
-    - `x1 y1 x2 y2`
+The dated directory names preserve the experiment lineage and import layout;
+`supplementary_validation` is a historical code-directory name, not a separate
+current dataset. Run each reference program in a separate Python process because
+the historical stages contain different modules named `query_model.py`.
 
-- `data/us/labels.csv`
-  - Two columns are expected:
-    - `filename`
-    - `label`
-  - Labels must be one of: `2, 3, 4A, 4B, 4C, 5`
+## Installation and data-free check
 
-- `data/us/X_with_only_feature.xlsx`
-  - Your structured feature table.
-  - Must contain `id` and `BI-RADS`.
-  - All remaining feature columns are treated as numeric feature inputs.
-
-- `data/us/X_with_only_phrase.xlsx`
-  - Phrase / prompt embedding table for **phrase-only**.
-  - Must contain:
-    - `id`
-    - `BI-RADS`
-    - `emb`
-
-- `data/us/X_with_all.xlsx`
-  - Prompt embedding table for **all-input**.
-  - Must contain:
-    - `id`
-    - `BI-RADS`
-    - `emb`
-
-## 2. Important design choices in this version
-
-- **ROI is NOT used as model input.**
-  ROI is only used for:
-  - optional SB/OT alignment loss during training
-  - interpretability evaluation / visualization
-
-- **Current code matches your uploaded tables.**
-  In your uploaded Excel files, each sample has **one prompt embedding** in the `emb` column.  
-  Therefore this implementation is a **prompt-guided** version that is fully compatible with your current data.
-
-- **Label mapping is fixed.**
-  The class mapping is:
-  - `2 -> 1`
-  - `3 -> 2`
-  - `4A -> 3`
-  - `4B -> 4`
-  - `4C -> 5`
-  - `5 -> 6`
-
-## 3. Environment setup
+Python 3.12 was used in the frozen environment. Install PyTorch and torchvision
+for your CPU/CUDA platform, then install the remaining dependencies:
 
 ```bash
-cd Code_v2
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+python -m pip install torch==2.8.0 torchvision==0.23.0
+python -m pip install -r requirements.txt
+python tests/smoke_cpu.py
 ```
 
-## 4. Build splits
+`requirements-optional.txt` records the CatBoost and OpenCV versions used by
+the strong-baseline and original-data preparation programs, respectively.
 
-If you already have your own `train_ids.txt`, `val_ids.txt`, `test_ids.txt`, skip this step.
+The smoke check uses synthetic inputs on CPU only. It checks dimensions,
+residual isolation, uniform attention, ROI-KL/OT/path gradients and the metric
+contract. It does not load clinical records, download pretrained weights, run
+an optimizer or reproduce any reported performance value.
 
-```bash
-python scripts/make_splits.py \
-  --labels-csv data/us/labels.csv \
-  --out-dir data/us/splits \
-  --seed 42 \
-  --train-ratio 0.7 \
-  --val-ratio 0.15
+Build the main prediction model directly from the revised factory:
+
+```python
+import sys
+sys.path.insert(0, "revised/results_pgca36_pathology_20261013")
+from experiment_models import make_model
+
+model = make_model("PGCA-0")
+# out = model(image, features36, pathology_embedding)
+# image: [B, 1, 224, 224]; features36: [B, 36]; embedding: [B, 512]
+# No ROI argument is required by the prediction network.
 ```
 
-## 5. Optional: cache embeddings to `.npy`
+Use `make_model`, not the historical `PGCAModel` constructor directly. The factory
+replaces its legacy head with `IndependentOrdinalHead`. The retained class name
+`ResNetTokenEncoder` refers to the four-stage CNN above, **not** a ResNet. These
+names are retained to avoid silently changing frozen construction/state behavior.
 
-This is optional. The training code can read directly from Excel.
+## Reproduction boundaries
 
-```bash
-python scripts/export_phrase_embeddings.py \
-  --xlsx data/us/X_with_only_phrase.xlsx \
-  --out-dir data/us/cache/phrase_only
+The frozen cohort contains 3,709 images with train/validation/test counts
+2,599/555/555. Seeds are 42, 3407 and 2026. The final Query matrix comprises
+15 Residual-ON/no-spatial-loss records, 15 Residual-OFF records, and 9
+Residual-OFF/equal-ROI-KL records. Three Matched/ON checkpoints were historically
+reused; 36 new fits produced the remaining records. These are image counts and
+model-seed records, not numbers of independent patients.
 
-python scripts/export_phrase_embeddings.py \
-  --xlsx data/us/X_with_all.xlsx \
-  --out-dir data/us/cache/all_input
-```
+Clinical images, reports, embeddings, patient-linked splits, predictions and
+checkpoints are **not distributed** by this source release. See
+[the private-data contract](docs/DATA_CONTRACT.md) and
+[reproduction instructions](docs/REPRODUCTION.md). The training drivers retain
+their hash/preflight gates: a fresh public clone is not a one-command reproduction
+of the clinical experiments. Missing private provenance must not be bypassed by
+fabricating successful checks or replacing the frozen split.
 
-## 6. Training commands
+The final analysis scripts, rather than the initial result summaries, identify
+the relevant paired comparisons and the 12-test Holm family. Earlier semantic
+and whole-text controls must not be relabeled as the final group-consistent
+Query-only experiments. Neither favorable point estimates nor ROI overlap imply
+universal statistical superiority or causal explanation fidelity.
 
-### A. image-only
+## Source preservation and privacy
 
-```bash
-python src/train.py --config configs/image_only.yaml
-```
+Model, loss, metric and training function/class bodies are retained from the
+server snapshots. Eight module-level project-root declarations were made
+relative for this source release; no architecture or loss was redesigned.
+[Source provenance](docs/source_provenance.json) records the source and released
+file hashes. [The release notes](CHANGELOG.md) describe the migration.
 
-### B. feature-only
-
-```bash
-python src/train.py --config configs/feature_only.yaml
-```
-
-### C. phrase-only
-
-```bash
-python src/train.py --config configs/phrase_only.yaml
-```
-
-### D. image+feature
-
-```bash
-python src/train.py --config configs/image_feature.yaml
-```
-
-### E. image+phrase
-
-```bash
-python src/train.py --config configs/image_phrase.yaml
-```
-
-### F. all-input (PGCA)
-
-```bash
-python src/train.py --config configs/all_input.yaml
-```
-
-
-## 6b. Smoke test with included sample images
-
-The package includes **2 sample images + ROI txt** copied from your original zip.
-To quickly verify the full `all-input` pipeline, temporarily edit `configs/all_input.yaml`:
-
-```yaml
-paths:
-  split_dir: data/us/sample_splits
-```
-
-Then run:
-
-```bash
-python src/train.py --config configs/all_input.yaml
-```
-
-This is only for a code sanity check, not for real experiments.
-
-## 7. Evaluation
-
-```bash
-python src/eval.py --config configs/image_only.yaml --checkpoint runs/image_only/best.pt --split test
-python src/eval.py --config configs/all_input.yaml --checkpoint runs/all_input/best.pt --split test
-```
-
-For other experiment lines, switch to the corresponding config: `image_only.yaml`, `feature_only.yaml`, `phrase_only.yaml`, `image_feature.yaml`, `image_phrase.yaml`, or `all_input.yaml`.
-
-## 8. Notes about `all-input`
-
-By default, `configs/all_input.yaml` uses:
-- explicit structured features from `X_with_only_feature.xlsx`
-- prompt embedding from `X_with_all.xlsx`
-- image input from `data/us/images/`
-
-If you want to avoid potential feature duplication inside the text prompt, you can change:
-
-```yaml
-phrase_xlsx: data/us/X_with_only_phrase.xlsx
-```
-
-inside `configs/all_input.yaml`.
-
-## 9. Outputs
-
-Training saves files under `runs/<experiment_name>/`:
-
-- `best.pt`                best checkpoint by validation QWK
-- `last.pt`                last checkpoint
-- `metrics_epoch_*.json`   epoch metrics
-- `test_predictions.csv`   generated by `eval.py`
-
-## 10. Suggested paper wording
-
-Because the current Excel files store a **single prompt embedding per sample**, a precise description is:
-
-> We serialize the structured features together with the preliminary descriptive phrases into a structured prompt and encode it into one text embedding, which conditions cross-attention over image tokens.
-
-If later you export **multiple phrase embeddings per sample**, the code can be extended to true phrase-specific attention.
+Old sample data and run artifacts were removed from the current public tree.
+This is not a rewrite or purge of previously published Git history. Historical
+server code, checkpoints and original data were not overwritten.

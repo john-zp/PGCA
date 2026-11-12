@@ -1,0 +1,11 @@
+{
+  "bootstrap_replicates": 2000,
+  "bootstrap_seed": 724299,
+  "unit": "locked_risk_union_group",
+  "paired_same_draw_across_models_and_training_seeds": true,
+  "interval": "percentile_95_percent",
+  "seed_variance": "separate_sample_SD_ddof_1",
+  "multiplicity_adjusted": false,
+  "historical_common_config_bootstrap_fields_used": false,
+  "exploratory_reused_test_set": true
+}

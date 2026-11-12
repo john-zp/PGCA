@@ -1,11 +1,12 @@
-numpy
-pandas
-openpyxl
-PyYAML
-scikit-learn
-Pillow
-opencv-python
-matplotlib
-tqdm
-torch
-torchvision
+# Install a platform-appropriate torch==2.8.0 and torchvision==0.23.0 first.
+# These versions were recorded in the frozen research runtime.
+numpy==2.3.2
+pandas==3.0.6
+scipy==1.18.1
+scikit-learn==1.9.1
+Pillow==11.3.0
+openpyxl==3.1.5
+matplotlib==3.10.5
+PyYAML==6.0.2
+# Optional: CatBoost for run_strong.py; OpenCV for raw-data preparation.
+# They are not needed by the data-free model check.

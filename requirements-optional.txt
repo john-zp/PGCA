@@ -1,0 +1,3 @@
+# Recorded optional experiment dependencies; not needed for the CPU smoke check.
+catboost==1.2.8
+opencv-python-headless==5.0.0.93

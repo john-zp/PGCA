@@ -1,0 +1,480 @@
+{
+  "timestamp_unix": 1793627455.021898,
+  "base_config": {
+    "cohort": "pathology_known_retrospective_birads_six_grade",
+    "image_size": 224,
+    "feature_dim": 36,
+    "phrase_dim": 512,
+    "image_embed_dim": 256,
+    "hidden_dim": 256,
+    "attention_heads": 4,
+    "dropout": 0.2,
+    "image_global_dropout": 0.1,
+    "normalized_image_cache_dtype": "float16_cast_to_float32_for_model_input",
+    "epochs": 30,
+    "batch_size": 16,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "gradient_clip_norm": 5.0,
+    "num_workers": 0,
+    "seeds": [
+      42,
+      3407,
+      2026
+    ],
+    "split_seed": 42,
+    "checkpoint_selection": "maximum_validation_QWK_then_minimum_validation_MAE_then_earliest_epoch",
+    "horizontal_flip_probability": 0.5,
+    "global_fitted_scaler_or_imputer": "none_binary_fields_missing_samples_isolated",
+    "lambda_ordinal": 1.0,
+    "lambda_static_OT": 0.2,
+    "static_OT_internal_beta": 0.3,
+    "lambda_SB_path": 0.05,
+    "OT_epsilon": 0.05,
+    "sinkhorn_iterations": 200,
+    "marginal_and_endpoint_absolute_tolerance": 0.0001,
+    "SB_path_intermediate_steps": 3,
+    "SB_path_horizon": 4,
+    "SB_path_objective": "historical_mean_KL_attention_to_path_states_with_corrected_reference_horizon_and_forward_backward_directions",
+    "localization_IoU_threshold": 0.5,
+    "localization_map": "bilinear_upsampling_then_minmax_for_IoU_probability_map_argmax_for_pointing_game",
+    "bootstrap_replicates": 1000,
+    "bootstrap_seed": 42,
+    "bootstrap_unit": "locked_patient_directory_risk_union_group",
+    "primary_paired_comparison_training_seed": 42,
+    "permutation_control": "fixed_seed_42_train_row_derangement_only_validation_and_test_remain_matched",
+    "formal_training_device": "cuda_required_no_CPU_fallback",
+    "scheduler": "none_fixed_learning_rate",
+    "historical_weights_loaded": false,
+    "test_hyperparameter_selection": false
+  },
+  "conditions": [
+    {
+      "stage": "A",
+      "query": "Matched",
+      "residual_on": true,
+      "seed": 42,
+      "lambda_ROI": 0.0,
+      "run_id": "A_Matched_ON_seed42",
+      "reuse_candidate": true
+    },
+    {
+      "stage": "A",
+      "query": "Matched",
+      "residual_on": true,
+      "seed": 3407,
+      "lambda_ROI": 0.0,
+      "run_id": "A_Matched_ON_seed3407",
+      "reuse_candidate": true
+    },
+    {
+      "stage": "A",
+      "query": "Matched",
+      "residual_on": true,
+      "seed": 2026,
+      "lambda_ROI": 0.0,
+      "run_id": "A_Matched_ON_seed2026",
+      "reuse_candidate": true
+    },
+    {
+      "stage": "A",
+      "query": "Shuffled",
+      "residual_on": true,
+      "seed": 42,
+      "lambda_ROI": 0.0,
+      "run_id": "A_Shuffled_ON_seed42",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "A",
+      "query": "Shuffled",
+      "residual_on": true,
+      "seed": 3407,
+      "lambda_ROI": 0.0,
+      "run_id": "A_Shuffled_ON_seed3407",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "A",
+      "query": "Shuffled",
+      "residual_on": true,
+      "seed": 2026,
+      "lambda_ROI": 0.0,
+      "run_id": "A_Shuffled_ON_seed2026",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "A",
+      "query": "Learnable",
+      "residual_on": true,
+      "seed": 42,
+      "lambda_ROI": 0.0,
+      "run_id": "A_Learnable_ON_seed42",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "A",
+      "query": "Learnable",
+      "residual_on": true,
+      "seed": 3407,
+      "lambda_ROI": 0.0,
+      "run_id": "A_Learnable_ON_seed3407",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "A",
+      "query": "Learnable",
+      "residual_on": true,
+      "seed": 2026,
+      "lambda_ROI": 0.0,
+      "run_id": "A_Learnable_ON_seed2026",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "A",
+      "query": "Sonographic",
+      "residual_on": true,
+      "seed": 42,
+      "lambda_ROI": 0.0,
+      "run_id": "A_Sonographic_ON_seed42",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "A",
+      "query": "Sonographic",
+      "residual_on": true,
+      "seed": 3407,
+      "lambda_ROI": 0.0,
+      "run_id": "A_Sonographic_ON_seed3407",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "A",
+      "query": "Sonographic",
+      "residual_on": true,
+      "seed": 2026,
+      "lambda_ROI": 0.0,
+      "run_id": "A_Sonographic_ON_seed2026",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "A",
+      "query": "Constant",
+      "residual_on": true,
+      "seed": 42,
+      "lambda_ROI": 0.0,
+      "run_id": "A_Constant_ON_seed42",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "A",
+      "query": "Constant",
+      "residual_on": true,
+      "seed": 3407,
+      "lambda_ROI": 0.0,
+      "run_id": "A_Constant_ON_seed3407",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "A",
+      "query": "Constant",
+      "residual_on": true,
+      "seed": 2026,
+      "lambda_ROI": 0.0,
+      "run_id": "A_Constant_ON_seed2026",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "B",
+      "query": "Matched",
+      "residual_on": false,
+      "seed": 42,
+      "lambda_ROI": 0.0,
+      "run_id": "B_Matched_OFF_seed42",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "B",
+      "query": "Matched",
+      "residual_on": false,
+      "seed": 3407,
+      "lambda_ROI": 0.0,
+      "run_id": "B_Matched_OFF_seed3407",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "B",
+      "query": "Matched",
+      "residual_on": false,
+      "seed": 2026,
+      "lambda_ROI": 0.0,
+      "run_id": "B_Matched_OFF_seed2026",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "B",
+      "query": "Shuffled",
+      "residual_on": false,
+      "seed": 42,
+      "lambda_ROI": 0.0,
+      "run_id": "B_Shuffled_OFF_seed42",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "B",
+      "query": "Shuffled",
+      "residual_on": false,
+      "seed": 3407,
+      "lambda_ROI": 0.0,
+      "run_id": "B_Shuffled_OFF_seed3407",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "B",
+      "query": "Shuffled",
+      "residual_on": false,
+      "seed": 2026,
+      "lambda_ROI": 0.0,
+      "run_id": "B_Shuffled_OFF_seed2026",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "B",
+      "query": "Learnable",
+      "residual_on": false,
+      "seed": 42,
+      "lambda_ROI": 0.0,
+      "run_id": "B_Learnable_OFF_seed42",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "B",
+      "query": "Learnable",
+      "residual_on": false,
+      "seed": 3407,
+      "lambda_ROI": 0.0,
+      "run_id": "B_Learnable_OFF_seed3407",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "B",
+      "query": "Learnable",
+      "residual_on": false,
+      "seed": 2026,
+      "lambda_ROI": 0.0,
+      "run_id": "B_Learnable_OFF_seed2026",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "B",
+      "query": "Sonographic",
+      "residual_on": false,
+      "seed": 42,
+      "lambda_ROI": 0.0,
+      "run_id": "B_Sonographic_OFF_seed42",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "B",
+      "query": "Sonographic",
+      "residual_on": false,
+      "seed": 3407,
+      "lambda_ROI": 0.0,
+      "run_id": "B_Sonographic_OFF_seed3407",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "B",
+      "query": "Sonographic",
+      "residual_on": false,
+      "seed": 2026,
+      "lambda_ROI": 0.0,
+      "run_id": "B_Sonographic_OFF_seed2026",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "B",
+      "query": "Constant",
+      "residual_on": false,
+      "seed": 42,
+      "lambda_ROI": 0.0,
+      "run_id": "B_Constant_OFF_seed42",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "B",
+      "query": "Constant",
+      "residual_on": false,
+      "seed": 3407,
+      "lambda_ROI": 0.0,
+      "run_id": "B_Constant_OFF_seed3407",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "B",
+      "query": "Constant",
+      "residual_on": false,
+      "seed": 2026,
+      "lambda_ROI": 0.0,
+      "run_id": "B_Constant_OFF_seed2026",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "C",
+      "query": "Matched",
+      "residual_on": false,
+      "seed": 42,
+      "lambda_ROI": 0.01,
+      "run_id": "C_Matched_OFF_seed42",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "C",
+      "query": "Matched",
+      "residual_on": false,
+      "seed": 3407,
+      "lambda_ROI": 0.01,
+      "run_id": "C_Matched_OFF_seed3407",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "C",
+      "query": "Matched",
+      "residual_on": false,
+      "seed": 2026,
+      "lambda_ROI": 0.01,
+      "run_id": "C_Matched_OFF_seed2026",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "C",
+      "query": "Shuffled",
+      "residual_on": false,
+      "seed": 42,
+      "lambda_ROI": 0.01,
+      "run_id": "C_Shuffled_OFF_seed42",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "C",
+      "query": "Shuffled",
+      "residual_on": false,
+      "seed": 3407,
+      "lambda_ROI": 0.01,
+      "run_id": "C_Shuffled_OFF_seed3407",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "C",
+      "query": "Shuffled",
+      "residual_on": false,
+      "seed": 2026,
+      "lambda_ROI": 0.01,
+      "run_id": "C_Shuffled_OFF_seed2026",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "C",
+      "query": "Learnable",
+      "residual_on": false,
+      "seed": 42,
+      "lambda_ROI": 0.01,
+      "run_id": "C_Learnable_OFF_seed42",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "C",
+      "query": "Learnable",
+      "residual_on": false,
+      "seed": 3407,
+      "lambda_ROI": 0.01,
+      "run_id": "C_Learnable_OFF_seed3407",
+      "reuse_candidate": false
+    },
+    {
+      "stage": "C",
+      "query": "Learnable",
+      "residual_on": false,
+      "seed": 2026,
+      "lambda_ROI": 0.01,
+      "run_id": "C_Learnable_OFF_seed2026",
+      "reuse_candidate": false
+    }
+  ],
+  "formal_condition_count": 39,
+  "new_fit_count_if_reuse_passes": 36,
+  "optional_C_residual_ON": false,
+  "D_status": "BLOCKED_UNVALIDATED_TEXT_DECOMPOSITION_AND_GENERATION_PROVENANCE",
+  "mapping": {
+    "train": {
+      "groups": 1792,
+      "images": 2599,
+      "mapping_seed": 2026110201,
+      "attempts": 1,
+      "unique_donor_groups": 1792
+    },
+    "val": {
+      "groups": 383,
+      "images": 555,
+      "mapping_seed": 2026110202,
+      "attempts": 1,
+      "unique_donor_groups": 383
+    },
+    "test": {
+      "groups": 380,
+      "images": 555,
+      "mapping_seed": 2026110203,
+      "attempts": 1,
+      "unique_donor_groups": 380
+    },
+    "historical_patients_with_multiple_donors": 787
+  },
+  "mapping_identical_across_training_seeds": true,
+  "constant_query": "train-image-mean 512-D embedding projected through initialized prompt_proj and external q_proj; detached 256-D buffer frozen at MHA input for entire fit; internal MHA projection remains shared and trainable",
+  "learnable_query": "global 256-D parameter N(0,0.02^2), through shared external q_proj; initialization fork_rng preserves original shared parameter initialization",
+  "sonographic_query": "new 36-to-256 Linear/GELU/LayerNorm input adapter then shared external q_proj; no new modality",
+  "unused_parameters": "existing unused pathology projector (and unused external q_proj for Constant/OFF) frozen, not padded with dummy parameters",
+  "residual_OFF": "zeros at external 256-D residual interface; no other text-to-classifier route",
+  "primary_contrasts": [
+    "B Matched-Learnable",
+    "B Matched-Sonographic",
+    "B Matched-Shuffled",
+    "C Matched-Learnable Top-10% IoU"
+  ],
+  "classification_metrics": [
+    "Accuracy",
+    "MAE",
+    "QWK",
+    "Macro-F1"
+  ],
+  "bootstrap_replicates": 2000,
+  "bootstrap_seed": 724299,
+  "topk_fractions": [
+    0.01,
+    0.025,
+    0.05,
+    0.075,
+    0.1,
+    0.15,
+    0.2
+  ],
+  "threshold": 0.5,
+  "test_access": "no new test predictions until all condition definitions, seeds, weights and visualization cases locked; no test-adaptive changes",
+  "stage_reports": true,
+  "test_set_previously_reused": true,
+  "automatic_shutdown": false,
+  "primary_classification_metrics": [
+    "Accuracy",
+    "MAE",
+    "QWK",
+    "Macro-F1"
+  ],
+  "exploratory_contrasts": [
+    "Matched minus each other Query within A/B/C where available",
+    "A minus B within each Query",
+    "C minus B within Matched/Shuffled/Learnable"
+  ],
+  "bootstrap_CI_definition": "percentile paired risk-group CI; same resampling across seeds and methods; conditional on fitted models and one frozen donor mapping",
+  "attention_sensitivity": "paired cosine-normalized map Spearman and normalized L1 for Matched vs Shuffled/Learnable; additional within-checkpoint Query-only donor intervention without changing matched residual; diagnostic only, not substituted for trained Shuffled control"
+}
